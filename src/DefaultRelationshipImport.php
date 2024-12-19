@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class DefaultRelationshipImport implements ToCollection, WithHeadingRow
-{    
+{
     protected array $customImportData = [];
 
     protected ?Closure $collectionMethod = null;
@@ -26,14 +26,13 @@ class DefaultRelationshipImport implements ToCollection, WithHeadingRow
         public mixed $ownerRecord = null,
         public mixed $relationship = null,
         public ?Table $table = null
-    ) {
-    }
+    ) {}
 
     public function setAdditionalData(array $additionalData): void
     {
         $this->additionalData = $additionalData;
     }
-    
+
     public function setCustomImportData(array $customImportData): void
     {
         $this->customImportData = $customImportData;
@@ -51,9 +50,9 @@ class DefaultRelationshipImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $collection)
     {
-        if(is_callable($this->collectionMethod)) {
+        if (is_callable($this->collectionMethod)) {
             $collection = call_user_func(
-                $this->collectionMethod, 
+                $this->collectionMethod,
                 $this->model,
                 $collection,
                 $this->additionalData,
@@ -61,15 +60,15 @@ class DefaultRelationshipImport implements ToCollection, WithHeadingRow
                 $this->relationship,
                 $this->table
             );
-        }else{
+        } else {
             foreach ($collection as $row) {
 
                 $data = $row->toArray();
-                if(filled($this->additionalData)) {
+                if (filled($this->additionalData)) {
                     $data = array_merge($data, $this->additionalData);
                 }
 
-                if($this->afterValidationMutator){
+                if ($this->afterValidationMutator) {
                     $data = call_user_func(
                         $this->afterValidationMutator,
                         $data
@@ -78,7 +77,7 @@ class DefaultRelationshipImport implements ToCollection, WithHeadingRow
 
                 // insert the relation data
                 $pivotData = [];
-                
+
                 if ($this->relationship instanceof BelongsToMany) {
                     $pivotColumns = $this->relationship->getPivotColumns();
 
@@ -98,6 +97,7 @@ class DefaultRelationshipImport implements ToCollection, WithHeadingRow
                     $this->relationship instanceof HasManyThrough
                 ) {
                     $record->save();
+
                     continue;
                 }
 

@@ -9,12 +9,11 @@ class SampleExcelExport implements FromCollection, WithHeadings
 {
     public function __construct(
         public array $data
-    )
-    {}
+    ) {}
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return collect($this->data);

@@ -30,22 +30,24 @@ class ExcelImportRelationshipAction extends Action
                 method_exists($livewire, 'getTable') ? $livewire->getTable() : null
             );
 
-            if(method_exists($importObject, 'setAdditionalData') && isset($this->additionalData)) {
+            if (method_exists($importObject, 'setAdditionalData') && isset($this->additionalData)) {
                 $importObject->setAdditionalData($this->additionalData);
             }
 
-            if(method_exists($importObject, 'setCustomImportData') && isset($this->customImportData)) {
+            if (method_exists($importObject, 'setCustomImportData') && isset($this->customImportData)) {
                 $importObject->setCustomImportData($this->customImportData);
             }
 
-            if(method_exists($importObject, 'setCollectionMethod') && isset($this->collectionMethod)) {
+            if (method_exists($importObject, 'setCollectionMethod') && isset($this->collectionMethod)) {
                 $importObject->setCollectionMethod($this->collectionMethod);
             }
 
-            if(method_exists($importObject, 'setAfterValidationMutator' && 
+            if (method_exists(
+                $importObject,
+                'setAfterValidationMutator' &&
                (isset($this->afterValidationMutator) || $this->shouldRetainBeforeValidationMutation)
-            )){
-                $afterValidationMutator = $this->shouldRetainBeforeValidationMutation ? 
+            )) {
+                $afterValidationMutator = $this->shouldRetainBeforeValidationMutation ?
                         $this->beforeValidationMutator :
                         $this->afterValidationMutator;
                 $importObject->setAfterValidationMutator($afterValidationMutator);
@@ -56,6 +58,7 @@ class ExcelImportRelationshipAction extends Action
             if (is_callable($this->afterImportClosure)) {
                 call_user_func($this->afterImportClosure, $data, $livewire);
             }
+
             return true;
         };
     }
