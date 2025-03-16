@@ -43,7 +43,7 @@ class Client extends Model
 }
 ```
 
-For example, if you have a 'ClientResource' in your project, integrate the action into ListClients class as demonstrated below:
+For example, if you have a `ClientResource` in your project, integrate the action into `ListClients` class as demonstrated below:
 
 ```php
 
