@@ -4,7 +4,6 @@ namespace EightyNine\ExcelImport\Concerns;
 
 use Closure;
 use EightyNine\ExcelImport\ValidationImport;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Maatwebsite\Excel\Facades\Excel;
@@ -35,12 +34,14 @@ trait HasUploadForm
     {
         $this->beforeValidationMutator = $closure;
         $this->shouldRetainBeforeValidationMutation = $shouldRetainBeforeValidationMutation;
+
         return $this;
     }
 
     public function mutateAfterValidationUsing(Closure $closure): static
     {
         $this->afterValidationMutator = $closure;
+
         return $this;
     }
 
@@ -55,6 +56,7 @@ trait HasUploadForm
     public function uploadField(Closure $closure): static
     {
         $this->uploadField = $closure;
+
         return $this;
     }
 
@@ -65,6 +67,7 @@ trait HasUploadForm
         } else {
             $this->beforeUploadFieldFormFields[] = $field;
         }
+
         return $this;
     }
 
@@ -73,6 +76,7 @@ trait HasUploadForm
         foreach ($fields as $field) {
             $this->addField($field, false);
         }
+
         return $this;
     }
 
@@ -81,6 +85,7 @@ trait HasUploadForm
         foreach ($fields as $field) {
             $this->addField($field, true);
         }
+
         return $this;
     }
 
@@ -96,6 +101,7 @@ trait HasUploadForm
         if ($this->afterUploadFieldFormFields) {
             $formFields = array_merge($formFields, $this->afterUploadFieldFormFields);
         }
+
         return $formFields;
     }
 
@@ -105,7 +111,6 @@ trait HasUploadForm
 
         return $this;
     }
-
 
     public function visibility(string | Closure | null $visibility): static
     {
@@ -119,7 +124,7 @@ trait HasUploadForm
         $fileUpload = FileUpload::make('upload')
             ->acceptedFileTypes($this->acceptedFileTypes)
             ->label(function ($livewire) {
-                if (!method_exists($livewire, 'getTable')) {
+                if (! method_exists($livewire, 'getTable')) {
                     return __('Excel Data');
                 }
 
@@ -127,7 +132,7 @@ trait HasUploadForm
             })
             ->default(1)
             ->storeFiles($this->storeFiles)
-            ->disk(fn() => $this->disk ?: (config('excel-import.upload_disk') ?:
+            ->disk(fn () => $this->disk ?: (config('excel-import.upload_disk') ?:
                 config('filesystems.default')))
             ->visibility($this->visibility)
             ->rules($this->validationRules())
@@ -139,6 +144,7 @@ trait HasUploadForm
                 $this->getSampleExcelButton()
             );
         }
+
         return $fileUpload;
     }
 
@@ -146,7 +152,7 @@ trait HasUploadForm
     {
         $rules = [];
         if ($this->validate) {
-            $rules[] = fn(): Closure => function (string $attribute, $value, Closure $fail) {
+            $rules[] = fn (): Closure => function (string $attribute, $value, Closure $fail) {
                 Excel::import(
                     new ValidationImport(
                         $fail,
@@ -157,6 +163,7 @@ trait HasUploadForm
                 );
             };
         }
+
         return $rules;
     }
 }

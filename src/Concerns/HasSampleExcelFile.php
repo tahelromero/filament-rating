@@ -10,9 +10,13 @@ use Maatwebsite\Excel\Facades\Excel;
 trait HasSampleExcelFile
 {
     protected string $sampleFileName = 'sample.xlsx';
+
     protected $defaultExportClass = SampleExcelExport::class;
-    protected ?array $sampleData = null;
+
+    protected string | array | null $sampleData = null;
+
     protected ?string $sampleButtonLabel = null;
+
     protected ?Closure $actionCustomisationClosure = null;
 
     public function downloadSampleExcelFile()
@@ -33,15 +37,24 @@ trait HasSampleExcelFile
         $this->defaultExportClass = $class;
     }
 
-    public function setSampleData(array $data)
+    public function setSampleData(string | array $data)
     {
-        if (count($data) > 0 && isset($data[0]) && is_array($data[0])) {
+        if (is_string($data)) {
             $this->sampleData = $data;
+
             return;
         } else {
-            $this->sampleData = [$data];
-            return;
+            if (count($data) > 0 && isset($data[0]) && is_array($data[0])) {
+                $this->sampleData = $data;
+
+                return;
+            } else {
+                $this->sampleData = [$data];
+
+                return;
+            }
         }
+
     }
 
     public function setSampleButtonLabel(?string $label)
@@ -51,15 +64,21 @@ trait HasSampleExcelFile
 
     protected function getSampleExcelButton()
     {
-        $action = Action::make($this->sampleButtonLabel ?: __('excel-import::excel-import.download_sample_excel_file'))
-            ->action(fn() => $this->downloadSampleExcelFile());
+        $action = Action::make($this->sampleButtonLabel ?: __('excel-import::excel-import.download_sample_excel_file'));
+        if (is_string($this->sampleData)) {
+            $action->url($this->sampleData);
+        } else {
+            $action->action(fn () => $this->downloadSampleExcelFile());
+        }
         if (isset($this->actionCustomisationClosure)) {
             return call_user_func($this->actionCustomisationClosure, $action);
         }
+
         return $action;
     }
 
-    public function setActionCustomisationClosure(?Closure $customiseActionUsing){
+    public function setActionCustomisationClosure(?Closure $customiseActionUsing)
+    {
         $this->actionCustomisationClosure = $customiseActionUsing;
     }
 
@@ -75,6 +94,19 @@ trait HasSampleExcelFile
         $this->setDefaultExportClass($exportClass ?: $this->defaultExportClass);
         $this->setSampleButtonLabel($sampleButtonLabel ?: $this->sampleButtonLabel);
         $this->setActionCustomisationClosure($customiseActionUsing);
+
+        return $this;
+    }
+
+    public function sampleFileExcel(
+        string $url,
+        ?string $sampleButtonLabel = null,
+        ?Closure $customiseActionUsing = null
+    ): static {
+        $this->setSampleData($url);
+        $this->setSampleButtonLabel($sampleButtonLabel ?: $this->sampleButtonLabel);
+        $this->setActionCustomisationClosure($customiseActionUsing);
+
         return $this;
     }
 }

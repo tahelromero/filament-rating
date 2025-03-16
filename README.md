@@ -284,6 +284,15 @@ protected function getHeaderActions(): array
                     ->icon('heroicon-m-clipboard')
                     ->requiresConfirmation(),
             ),
+        // OR
+        \EightyNine\ExcelImport\ExcelImportAction::make()
+            ->sampleFileExcel(
+                url: url('excel/users.xlsx'),
+                sampleButtonLabel: 'Download Sample',
+                customiseActionUsing: fn(Action $action) => $action->color('secondary')
+                    ->icon('heroicon-m-clipboard')
+                    ->requiresConfirmation(),
+            ),
         Actions\CreateAction::make(),
     ];
 }

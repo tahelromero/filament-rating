@@ -4,7 +4,6 @@ namespace EightyNine\ExcelImport\Concerns;
 
 trait CanCustomiseActionSetup
 {
-
     protected array $acceptedFileTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
 
     protected bool $storeFiles = false;

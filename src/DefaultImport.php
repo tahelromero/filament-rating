@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class DefaultImport implements ToCollection, WithHeadingRow
 {
     protected array $additionalData = [];
-    
+
     protected array $customImportData = [];
 
     protected ?Closure $collectionMethod = null;
@@ -20,14 +20,13 @@ class DefaultImport implements ToCollection, WithHeadingRow
     public function __construct(
         public string $model,
         public array $attributes = []
-    ) {
-    }
+    ) {}
 
     public function setAdditionalData(array $additionalData): void
     {
         $this->additionalData = $additionalData;
     }
-    
+
     public function setCustomImportData(array $customImportData): void
     {
         $this->customImportData = $customImportData;
@@ -45,21 +44,21 @@ class DefaultImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $collection)
     {
-        if(is_callable($this->collectionMethod)) {
+        if (is_callable($this->collectionMethod)) {
             $collection = call_user_func(
-                $this->collectionMethod, 
+                $this->collectionMethod,
                 $this->model,
                 $collection,
                 $this->additionalData,
                 $this->afterValidationMutator
             );
-        }else{
+        } else {
             foreach ($collection as $row) {
                 $data = $row->toArray();
-                if(filled($this->additionalData)) {
+                if (filled($this->additionalData)) {
                     $data = array_merge($data, $this->additionalData);
                 }
-                if($this->afterValidationMutator){
+                if ($this->afterValidationMutator) {
                     $data = call_user_func(
                         $this->afterValidationMutator,
                         $data

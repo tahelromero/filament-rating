@@ -11,6 +11,7 @@ trait HasCustomCollectionMethod
     public function processCollectionUsing(Closure $closure): static
     {
         $this->collectionMethod = $closure;
+
         return $this;
     }
 }

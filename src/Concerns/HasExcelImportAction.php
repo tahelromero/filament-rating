@@ -8,16 +8,16 @@ use Maatwebsite\Excel\Facades\Excel;
 
 trait HasExcelImportAction
 {
-    use HasUploadForm,
-        HasFormActionHooks,
-        HasCustomCollectionMethod,
-        CanCustomiseActionSetup,
-        BelongsToTable,
-        HasSampleExcelFile;
+    use BelongsToTable;
+    use CanCustomiseActionSetup;
+    use HasCustomCollectionMethod;
+    use HasFormActionHooks;
+    use HasSampleExcelFile;
+    use HasUploadForm;
 
     protected array $importClassAttributes = [];
 
-    public function use(string $class = null, ...$attributes): static
+    public function use(?string $class = null, ...$attributes): static
     {
         $this->importClass = $class ?: DefaultImport::class;
         $this->importClassAttributes = $attributes;
@@ -71,22 +71,24 @@ trait HasExcelImportAction
                 $this->additionalData
             );
 
-            if(method_exists($importObject, 'setAdditionalData') && isset($this->additionalData)) {
+            if (method_exists($importObject, 'setAdditionalData') && isset($this->additionalData)) {
                 $importObject->setAdditionalData($this->additionalData);
             }
 
-            if(method_exists($importObject, 'setCustomImportData') && isset($this->customImportData)) {
+            if (method_exists($importObject, 'setCustomImportData') && isset($this->customImportData)) {
                 $importObject->setCustomImportData($this->customImportData);
             }
 
-            if(method_exists($importObject, 'setCollectionMethod') && isset($this->collectionMethod)) {
+            if (method_exists($importObject, 'setCollectionMethod') && isset($this->collectionMethod)) {
                 $importObject->setCollectionMethod($this->collectionMethod);
             }
 
-            if(method_exists($importObject, 'setAfterValidationMutator' && 
+            if (method_exists(
+                $importObject,
+                'setAfterValidationMutator' &&
                (isset($this->afterValidationMutator) || $this->shouldRetainBeforeValidationMutation)
-            )){
-                $afterValidationMutator = $this->shouldRetainBeforeValidationMutation ? 
+            )) {
+                $afterValidationMutator = $this->shouldRetainBeforeValidationMutation ?
                         $this->beforeValidationMutator :
                         $this->afterValidationMutator;
                 $importObject->setAfterValidationMutator($afterValidationMutator);
@@ -97,6 +99,7 @@ trait HasExcelImportAction
             if (is_callable($this->afterImportClosure)) {
                 call_user_func($this->afterImportClosure, $data, $livewire);
             }
+
             return true;
         };
     }

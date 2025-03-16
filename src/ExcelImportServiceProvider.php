@@ -58,9 +58,7 @@ class ExcelImportServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function packageRegistered(): void
-    {
-    }
+    public function packageRegistered(): void {}
 
     public function packageBooted(): void
     {
@@ -88,7 +86,7 @@ class ExcelImportServiceProvider extends PackageServiceProvider
         }
 
         // Testing
-        Testable::mixin(new TestsExcelImportAction());
+        Testable::mixin(new TestsExcelImportAction);
     }
 
     protected function getAssetPackageName(): ?string
