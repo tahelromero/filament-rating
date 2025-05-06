@@ -83,11 +83,8 @@ trait HasExcelImportAction
                 $importObject->setCollectionMethod($this->collectionMethod);
             }
 
-            if (method_exists(
-                $importObject,
-                'setAfterValidationMutator' &&
-               (isset($this->afterValidationMutator) || $this->shouldRetainBeforeValidationMutation)
-            )) {
+            if (method_exists($importObject, 'setAfterValidationMutator') &&
+               (isset($this->afterValidationMutator) || $this->shouldRetainBeforeValidationMutation)) {
                 $afterValidationMutator = $this->shouldRetainBeforeValidationMutation ?
                         $this->beforeValidationMutator :
                         $this->afterValidationMutator;
