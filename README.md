@@ -334,10 +334,134 @@ class PostsRelationManager extends RelationManager
 }
 ```
 
-Everything behaves and can be modified similar to the `ExcelImportAction` class, except the `DefaultRelationshipImport` class is used instead of the `DefaultImport` class. So if you are implementing a custom import class, you will need to extend the `DefaultRelationshipImport` class instead of the `DefaultImport` class. 
+### Stopping Imports and Returning Messages
 
+**New in v3.1.5+**: You can now stop the import process from within your custom import class and return messages to the frontend. This is useful for:
 
-## Testing
+- Header validation to ensure the file format is correct
+- Business logic validation that might require stopping the entire import
+- Custom validation that depends on form data or external conditions
+
+#### Using Enhanced Import Classes
+
+The package now provides `EnhancedDefaultImport` and `EnhancedDefaultRelationshipImport` classes that include methods to stop imports:
+
+```php
+use EightyNine\ExcelImport\EnhancedDefaultImport;
+use Illuminate\Support\Collection;
+
+class CustomUserImport extends EnhancedDefaultImport
+{
+    protected function beforeCollection(Collection $collection): void
+    {
+        // Validate required headers
+        $requiredHeaders = ['name', 'email', 'phone'];
+        $this->validateHeaders($requiredHeaders, $collection);
+
+        // Custom business logic validation
+        if ($collection->count() > 1000) {
+            $this->stopImportWithError('Too many rows. Maximum 1000 allowed.');
+        }
+
+        // Access custom data from the form
+        $formData = $this->customImportData;
+        if (isset($formData['department_id'])) {
+            $departmentExists = Department::where('id', $formData['department_id'])->exists();
+            $this->validateCustomCondition(
+                $departmentExists,
+                'Selected department does not exist.'
+            );
+        }
+    }
+
+    protected function beforeCreateRecord(array $data, $row): void
+    {
+        // Row-level validation
+        if (User::where('email', $data['email'])->exists()) {
+            $this->stopImportWithWarning(
+                "User with email {$data['email']} already exists."
+            );
+        }
+    }
+
+    protected function afterCollection(Collection $collection): void
+    {
+        // Show success message with statistics
+        $count = $collection->count();
+        $this->stopImportWithSuccess("Successfully imported {$count} users!");
+    }
+}
+```
+
+#### Available Methods
+
+**Stop Import Methods:**
+- `stopImportWithError(string $message)` - Shows red error notification
+- `stopImportWithWarning(string $message)` - Shows orange warning notification  
+- `stopImportWithInfo(string $message)` - Shows blue info notification
+- `stopImportWithSuccess(string $message)` - Shows green success notification
+
+**Validation Helpers:**
+- `validateHeaders(array $expectedHeaders, Collection $collection)` - Validates required headers
+- `validateCustomCondition(bool $condition, string $errorMessage)` - Custom validation
+
+**Hook Methods (override in your class):**
+- `beforeCollection(Collection $collection)` - Called before processing starts
+- `beforeCreateRecord(array $data, $row)` - Called before each record creation
+- `afterCreateRecord(array $data, $row, $record)` - Called after each record creation
+- `afterCollection(Collection $collection)` - Called after processing completes
+
+#### Using with Form Data
+
+You can access custom form data in your import class for validation:
+
+```php
+protected function getHeaderActions(): array
+{
+    return [
+        \EightyNine\ExcelImport\ExcelImportAction::make()
+            ->use(CustomUserImport::class)
+            ->beforeUploadField([
+                Select::make('department_id')
+                    ->label('Department')
+                    ->options(Department::pluck('name', 'id'))
+                    ->required(),
+            ])
+            ->beforeImport(function (array $data, $livewire, $excelImportAction) {
+                $excelImportAction->customImportData([
+                    'department_id' => $data['department_id'],
+                    'imported_by' => auth()->id(),
+                ]);
+            }),
+    ];
+}
+```
+
+#### Using with Existing Import Classes
+
+If you have existing import classes, you can add stopping capabilities by throwing the `ImportStoppedException`:
+
+```php
+use EightyNine\ExcelImport\Exceptions\ImportStoppedException;
+
+class MyExistingImport implements ToCollection, WithHeadingRow
+{
+    public function collection(Collection $collection)
+    {
+        // Your existing validation logic
+        if ($someCondition) {
+            throw new ImportStoppedException('Custom error message', 'error');
+        }
+        
+        // Continue with normal processing...
+    }
+}
+```
+
+The exception constructor accepts:
+- `$message` (string) - The message to show to the user
+- `$type` (string) - The notification type: 'error', 'warning', 'info', or 'success' (default: 'error')
+
 
 ```bash
 composer test

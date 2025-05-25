@@ -91,13 +91,39 @@ trait HasExcelImportAction
                 $importObject->setAfterValidationMutator($afterValidationMutator);
             }
 
-            Excel::import($importObject, $data['upload']);
+            try {
+                Excel::import($importObject, $data['upload']);
 
-            if (is_callable($this->afterImportClosure)) {
-                call_user_func($this->afterImportClosure, $data, $livewire);
+                if (is_callable($this->afterImportClosure)) {
+                    call_user_func($this->afterImportClosure, $data, $livewire);
+                }
+
+                return true;
+            } catch (\EightyNine\ExcelImport\Exceptions\ImportStoppedException $e) {
+                // Handle stopped import with user message
+                $notification = match ($e->getType()) {
+                    'warning' => \Filament\Notifications\Notification::make()
+                        ->warning()
+                        ->title(__('excel-import::excel-import.import_warning'))
+                        ->body($e->getUserMessage()),
+                    'info' => \Filament\Notifications\Notification::make()
+                        ->info()
+                        ->title(__('excel-import::excel-import.import_information'))
+                        ->body($e->getUserMessage()),
+                    'success' => \Filament\Notifications\Notification::make()
+                        ->success()
+                        ->title(__('excel-import::excel-import.import_success'))
+                        ->body($e->getUserMessage()),
+                    default => \Filament\Notifications\Notification::make()
+                        ->danger()
+                        ->title(__('excel-import::excel-import.import_failed'))
+                        ->body($e->getUserMessage()),
+                };
+
+                $notification->send();
+                
+                return false;
             }
-
-            return true;
         };
     }
 }
