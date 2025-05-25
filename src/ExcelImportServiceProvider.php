@@ -99,11 +99,17 @@ class ExcelImportServiceProvider extends PackageServiceProvider
      */
     protected function getAssets(): array
     {
-        return [
+        $assets = [
             // AlpineComponent::make('filament-excel-import', __DIR__ . '/../resources/dist/components/filament-excel-import.js'),
-            Css::make('filament-excel-import-styles', __DIR__ . '/../resources/dist/filament-excel-import.css'),
             Js::make('filament-excel-import-scripts', __DIR__ . '/../resources/dist/filament-excel-import.js'),
         ];
+
+        // Only load stylesheet if explicitly enabled in config
+        if (config('excel-import.load_stylesheet', false)) {
+            $assets[] = Css::make('filament-excel-import-styles', __DIR__ . '/../resources/dist/filament-excel-import.css');
+        }
+
+        return $assets;
     }
 
     /**

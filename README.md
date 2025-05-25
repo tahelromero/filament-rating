@@ -363,3 +363,74 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+## CSS Styling and Theme Integration
+
+### Avoiding CSS Conflicts
+
+By default, this package loads minimal CSS to avoid conflicts with your application's existing button styles and theme. The stylesheet loading is disabled by default to prevent issues with `[type="button"]` selectors and other global styles.
+
+If you need to enable the custom stylesheet, you can publish the config file and set `load_stylesheet` to `true`:
+
+```bash
+php artisan vendor:publish --tag=excel-import-config
+```
+
+Then in your `config/excel-import.php` file:
+
+```php
+return [
+    // ...other config options
+    
+    /**
+     * Load custom stylesheet
+     *
+     * Set to true to enable loading the custom CSS.
+     * Set to false to disable loading to prevent conflicts
+     * with existing button styles in your application
+     */
+    'load_stylesheet' => true,
+];
+```
+
+### Theme Integration
+
+The Excel Import action inherits the styling from your Filament theme automatically. If you're experiencing styling conflicts, ensure that:
+
+1. Your Filament theme is properly configured
+2. The `load_stylesheet` config option is set to `false` (default)
+3. Your application's CSS doesn't have overly broad selectors that might conflict
+
+### Custom Styling
+
+If you need custom styling for the Excel Import components, you can:
+
+1. Add CSS targeting the specific modal and form components
+2. Use Filament's theming system to customize the appearance
+3. Override specific component classes in your application's CSS
+
+## Troubleshooting
+
+### CSS Conflicts with `[type="button"]` selectors
+
+If you're experiencing CSS conflicts where the Excel Import package is overriding your application's button styles, this is because the package was previously loading the full Filament theme CSS. 
+
+**This has been resolved in the latest version** by:
+
+1. **Minimal CSS Loading**: The package now loads only minimal CSS by default
+2. **Configurable Stylesheet**: You can enable/disable stylesheet loading via config
+3. **Theme Integration**: The package relies on your existing Filament theme
+
+If you're still experiencing issues:
+
+1. Ensure you're using the latest version of the package
+2. Verify that `load_stylesheet` is set to `false` in your config (this is the default)
+3. Clear your browser cache and rebuild your assets
+
+### Migration from Previous Versions
+
+If you're upgrading from a previous version that had CSS conflicts:
+
+1. Publish the config file: `php artisan vendor:publish --tag=excel-import-config`
+2. Ensure `load_stylesheet` is set to `false`
+3. Rebuild your assets: `npm run build`

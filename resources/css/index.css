@@ -1,1 +1,6 @@
-@import '../../vendor/filament/filament/resources/css/theme.css';
+/* Excel Import Plugin Styles - Minimal to avoid conflicts with parent app */
+
+/* Placeholder for excel import specific styles */
+.fi-excel-import-placeholder {
+    display: contents;
+}
