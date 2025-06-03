@@ -8,4 +8,7 @@ return [
     'import_warning' => 'Import Warning',
     'import_information' => 'Import Information',
     'import_success' => 'Import Success',
+    'excel_data' => 'Excel Data',
+    'import_action_heading' => 'Import Excel',
+    'import_action_description' => 'Import data into database from excel file',
 ];

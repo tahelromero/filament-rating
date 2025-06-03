@@ -52,8 +52,8 @@ trait HasExcelImportAction
             ->color('success')
             ->modalWidth('md')
             ->modalAlignment('center')
-            ->modalHeading(fn ($livewire) => __('Import Excel'))
-            ->modalDescription(__('Import data into database from excel file'))
+            ->modalHeading(fn ($livewire) => __('excel-import::excel-import.import_action_heading'))
+            ->modalDescription(__('excel-import::excel-import.import_action_description'))
             ->modalFooterActionsAlignment('right')
             ->closeModalByClickingAway(false)
             ->action('importData');
