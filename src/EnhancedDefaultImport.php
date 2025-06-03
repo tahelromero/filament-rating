@@ -81,12 +81,12 @@ class EnhancedDefaultImport implements ToCollection, WithHeadingRow
     protected function validateHeaders(array $expectedHeaders, Collection $collection): void
     {
         if ($collection->isEmpty()) {
-            $this->stopImportWithError('The uploaded file is empty or has no valid data.');
+            $this->stopImportWithError(__('excel-import::excel-import.file_empty_error'));
         }
 
         $firstRow = $collection->first();
         if (!$firstRow) {
-            $this->stopImportWithError('Unable to read the header row from the uploaded file.');
+            $this->stopImportWithError(__('excel-import::excel-import.header_read_error'));
         }
 
         $actualHeaders = array_keys($firstRow->toArray());
@@ -94,8 +94,10 @@ class EnhancedDefaultImport implements ToCollection, WithHeadingRow
         
         if (!empty($missingHeaders)) {
             $this->stopImportWithError(
-                'Missing required headers: ' . implode(', ', $missingHeaders) . 
-                '. Expected headers: ' . implode(', ', $expectedHeaders)
+                __('excel-import::excel-import.missing_headers_error', [
+                    'missing' => implode(', ', $missingHeaders),
+                    'expected' => implode(', ', $expectedHeaders)
+                ])
             );
         }
     }
