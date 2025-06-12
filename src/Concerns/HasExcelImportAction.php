@@ -92,7 +92,7 @@ trait HasExcelImportAction
             }
 
             try {
-                Excel::import($importObject, $data['upload']);
+                Excel::import($importObject, $data['upload']->getRealPath(), $this->disk);
 
                 if (is_callable($this->afterImportClosure)) {
                     call_user_func($this->afterImportClosure, $data, $livewire);
