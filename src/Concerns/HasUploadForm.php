@@ -125,10 +125,10 @@ trait HasUploadForm
             ->acceptedFileTypes($this->acceptedFileTypes)
             ->label(function ($livewire) {
                 if (! method_exists($livewire, 'getTable')) {
-                    return __('Excel Data');
+                    return __('excel-import::excel-import.excel_data');
                 }
 
-                return str($livewire->getTable()->getPluralModelLabel())->title() . ' ' . __('Excel Data');
+                return str($livewire->getTable()->getPluralModelLabel())->title() . ' ' . __('excel-import::excel-import.excel_data');
             })
             ->default(1)
             ->storeFiles($this->storeFiles)
