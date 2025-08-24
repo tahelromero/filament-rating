@@ -98,6 +98,12 @@ trait HasExcelImportAction
                     call_user_func($this->afterImportClosure, $data, $livewire);
                 }
 
+                \Filament\Notifications\Notification::make()
+                    ->success()
+                    ->title(__('excel-import::excel-import.import_success'))
+                    ->body(__('excel-import::excel-import.import_success_message'))
+                    ->send();
+
                 return true;
             } catch (\EightyNine\ExcelImport\Exceptions\ImportStoppedException $e) {
                 // Handle stopped import with user message
@@ -121,6 +127,9 @@ trait HasExcelImportAction
                 };
 
                 $notification->send();
+
+                // Stop the modal from closing if we have an error
+                $this->halt();
                 
                 return false;
             }

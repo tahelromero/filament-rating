@@ -13,6 +13,9 @@ return [
     'import_warning' => '导入警告',
     'import_information' => '导入信息',
     'import_success' => '导入成功',
+
+    // 成功消息
+    'import_success_message' => '导入已成功完成',
     
     // 验证消息
     'validation_failed' => '第 :row 行验证失败。返回以下错误信息：:messages',
