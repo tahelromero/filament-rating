@@ -152,7 +152,7 @@ class ExcelImportServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_filament-excel-import_table',
+            'create_excel_import_table',
         ];
     }
 }
