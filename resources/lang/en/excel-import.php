@@ -8,12 +8,15 @@ return [
     'excel_data' => 'Excel Data',
     'download_sample_excel_file' => 'Download Sample Excel File',
     
-    // Import Status Messages
+    // Import Status Title
     'import_failed' => 'Import Failed',
     'import_warning' => 'Import Warning',
     'import_information' => 'Import Information',
     'import_success' => 'Import Success',
     
+    // Success Message
+    'import_success_message' => 'Import completed successfully',
+
     // Validation Messages
     'validation_failed' => 'Row :row failed validation. The following messages were returned: :messages',
     
