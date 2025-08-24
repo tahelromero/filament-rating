@@ -4,7 +4,7 @@ namespace EightyNine\ExcelImport\Concerns;
 
 use Closure;
 use EightyNine\ExcelImport\SampleExcelExport;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
 
 trait HasSampleExcelFile
