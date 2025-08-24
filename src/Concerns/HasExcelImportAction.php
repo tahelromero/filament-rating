@@ -121,6 +121,9 @@ trait HasExcelImportAction
                 };
 
                 $notification->send();
+
+                // Stop the modal from closing if we have an error
+                $this->halt();
                 
                 return false;
             }
